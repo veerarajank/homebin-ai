@@ -1,0 +1,764 @@
+{
+  "name": "Waste Collection with Gemini",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {
+          "responseCode": 200,
+          "responseKey": "results"
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        1456,
+        200
+      ],
+      "id": "ce1715f6-97cc-40d7-9289-eedda5f6542e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Binary Image",
+        "options": {
+          "systemMessage": "=You are a Recycling Advisor Agent. Your task is to:\n\n1. Analyze the binary image input using the Gemini (Gemma 3) model to identify the object in the image.\n2. Use the tool `Recycling_Bin_Advisor` to query the Qdrant vector store (collection: `council`, limit: 4) with the identified label.\n3. Return only the most relevant bin type for the item.\n\n🛑 IMPORTANT:\n- DO NOT use markdown formatting (no ```json or ``` at all).\n- DO NOT include any explanation, description, or extra text.\n- DO NOT include line breaks or escape characters in the output.\n\n✅ Output ONLY the raw JSON object exactly like this:\n{\n  \"label\": \"Cardboard Box\",\n  \"bin\": \"White sack for cardboard\",\n  \"score\": \"0.65\"\n}",
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        316,
+        0
+      ],
+      "id": "fc1d073e-f1cd-4cbb-abde-8786967daa85",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "Recycling_Bin_Advisor",
+        "toolDescription": "Use this tool to get precise instructions on how to dispose of different types of waste. It queries a vector database containing up-to-date waste segregation rules for the local council. When you need to know which bin (e.g., General Waste, Recycling, Garden Waste) or sack (e.g., Paper Sack, Textile Bag) an item should go into, call this tool with the material's name.",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "council",
+          "mode": "list",
+          "cachedResultName": "council"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.2,
+      "position": [
+        420,
+        222.5
+      ],
+      "id": "ac69d26d-2111-4748-86bc-6e41d8344c05",
+      "name": "Qdrant Vector Store2",
+      "credentials": {
+        "qdrantApi": {
+          "id": "qwevpNeoG7ynxd6g",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/text-embedding-004"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        508,
+        420
+      ],
+      "id": "4e12fd38-a9e6-44a2-aa46-1cdd04e6bc84",
+      "name": "Embeddings Google Gemini2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ym8YOw3Foiq91FI9",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return JSON.parse($input.first().json.output)"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        796,
+        200
+      ],
+      "id": "323a2995-76a4-4f66-8ad5-9e0e08b5ea67",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=E:\\\\Projects\\\\Waste\\\\{{ $binary.file.fileName }}.{{ $binary.file.fileExtension }}",
+        "dataPropertyName": "=file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        80,
+        200
+      ],
+      "id": "2a845c30-52c4-4703-9236-ba79fc0ae72a",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "AnalyseResults",
+          "mode": "list",
+          "cachedResultName": "AnalyseResults"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "item": "={{ $json.label }}",
+            "bin": "={{ $json.bin }}",
+            "score": "={{ $json.score }}",
+            "filepath": "={{ $('Read/Write Files from Disk').item.json.fileName }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "filepath",
+              "displayName": "filepath",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "item",
+              "displayName": "item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "bin",
+              "displayName": "bin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "outputColumns": [
+            "Id"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1016,
+        200
+      ],
+      "id": "234d2d1a-bf87-4aa1-bb3b-08f17f63bad8",
+      "name": "Postgres",
+      "credentials": {
+        "postgres": {
+          "id": "7zNK6Ms0TcLQuR7p",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e3692b82-9fbd-4b8d-b6c2-4748dea69d30",
+              "name": "Id",
+              "value": "={{ $json.Id }}",
+              "type": "number"
+            },
+            {
+              "id": "907be2f4-80cc-45cb-9f7a-b2e50a5a9f31",
+              "name": "bin_or_sack",
+              "value": "={{ $('Code3').item.json.bin }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1236,
+        200
+      ],
+      "id": "86a27300-8962-490b-95f6-2b941ab7299c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "9b384fa3-deee-4e28-a299-fdce22a38b25",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        660
+      ],
+      "id": "08d38baa-d849-4730-8239-7c2f83aee046",
+      "name": "Feedback Collection",
+      "webhookId": "9b384fa3-deee-4e28-a299-fdce22a38b25"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "6dc9b95c-02db-4294-bd43-0323b7f7e488",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": "file"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        200
+      ],
+      "id": "9fc1568f-5afb-4fe6-901c-756703b2e35c",
+      "name": "Image Analysis",
+      "webhookId": "6dc9b95c-02db-4294-bd43-0323b7f7e488"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "AnalyseResults",
+          "mode": "list",
+          "cachedResultName": "AnalyseResults"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Feedback": "={{ $json.body.Feedback }}",
+            "Id": "={{ $json.body.Id }}"
+          },
+          "matchingColumns": [
+            "Id"
+          ],
+          "schema": [
+            {
+              "id": "filepath",
+              "displayName": "filepath",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "item",
+              "displayName": "item",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "score",
+              "displayName": "score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "bin",
+              "displayName": "bin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Id",
+              "displayName": "Id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        80,
+        660
+      ],
+      "id": "c51d6b70-b3f2-4f86-bd74-1648612b45fb",
+      "name": "Postgres1",
+      "credentials": {
+        "postgres": {
+          "id": "7zNK6Ms0TcLQuR7p",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        300,
+        660
+      ],
+      "id": "20834bd6-2e74-4f99-af33-16fb0907dd1f",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        300,
+        220
+      ],
+      "id": "fc4ec438-50cd-4f37-8d08-75ce99136ef3",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ym8YOw3Foiq91FI9",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        80,
+        880
+      ],
+      "id": "3b8ea3c4-00c7-4066-9fb6-d85cf096bcfc",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "fileSelector": "E:\\\\Projects\\\\WasteCouncilDocuments\\\\*.pdf",
+        "options": {
+          "dataPropertyName": "data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -140,
+        880
+      ],
+      "id": "fa0e3037-78c8-44b0-bd3e-dcd75ebec1bd",
+      "name": "Read/Write Files from Disk1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "council",
+          "mode": "list",
+          "cachedResultName": "council"
+        },
+        "embeddingBatchSize": 1000,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        880
+      ],
+      "id": "4f6d7719-ea03-478a-9f12-989b508f75bd",
+      "name": "Qdrant Vector Store1",
+      "credentials": {
+        "qdrantApi": {
+          "id": "qwevpNeoG7ynxd6g",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/text-embedding-004"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        540,
+        1100
+      ],
+      "id": "8cd98534-1ded-4d62-acb1-3c4eaa26ade5",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ym8YOw3Foiq91FI9",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        660,
+        1120
+      ],
+      "id": "169dc6d7-2ccf-4f48-9ddd-441faeef0425",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        760,
+        1340
+      ],
+      "id": "a48cbf3d-6615-4082-9296-7c9190b46d81",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -340,
+        860
+      ],
+      "id": "0a4f005f-7858-4bc1-870a-45ee4765ca7d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65f2c187-af4c-4704-af2d-238346f52131",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        300,
+        880
+      ],
+      "id": "1687a483-4e0f-4c65-8120-3c9ed100e960",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Feedback Collection": {
+      "main": [
+        [
+          {
+            "node": "Postgres1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Analysis": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "077601bf-ce17-47a4-8649-6d0ebb81d5ff",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9bd07776a798361fbc76bddc0faa5498924d31b0badcdb5d28f89e27e23973c"
+  },
+  "id": "8lB01jZrrBJ2C8rJ",
+  "tags": []
+}
