@@ -1,4 +1,4 @@
-# HomeBin AI [!(https://img.shields.io/badge/Built%20with-Bolt.new-blueviolet)](https://bolt.new)
+# HomeBin AI ![Home Bin AI Logo](https://github.com/veerarajank/homebin-ai/blob/main/assets/images/icon.png)
 
 **Your Smart Home Waste Assistant: Scan, Sort, & Recycle Right, Every Time.**
 
@@ -54,6 +54,7 @@ Developing a precise waste classification AI was an iterative process. We experi
 HomeBin AI employs a sophisticated, modular architecture designed for intelligence, scalability, and ease of maintenance. Our "AI Agent" orchestrated by n8n is at its core.
 
 ![Home Bin AI Architecture](https://raw.githubusercontent.com/veerarajank/homebin-ai/main/Home%20Bin%20AI.svg)
+
 
 Workflow Breakdown:
 
