@@ -78,10 +78,10 @@ Workflow Breakdown:
 * Python (requests, BeautifulSoup, Sentence Transformers): Used for the initial data scraping of local council recycling websites (e.g., from Chelmsford, UK) and preparing data for Qdrant.
 * Node.js: Backend runtime environment utilized within n8n.
 
-🚀 Getting Started (How to Run HomeBin AI)
+# 🚀 Getting Started (How to Run HomeBin AI)
 To get HomeBin AI up and running, you'll need to set up the backend services and then run the Expo frontend.
 
-# 1. Backend Services (n8n & Qdrant via Caddy on-prem Server)
+ ** 1. Backend Services (n8n & Qdrant via Caddy on-prem Server) **
 
 * Prerequisites:
 
