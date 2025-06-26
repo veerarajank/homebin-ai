@@ -53,3 +53,5 @@ Developing a precise waste classification AI was an iterative process. We experi
 ## 🏗️ How It Works (Architecture)
 
 HomeBin AI employs a sophisticated, modular architecture designed for intelligence, scalability, and ease of maintenance. Our "AI Agent" orchestrated by n8n is at its core.
+
+https://github.com/veerarajank/homebin-ai/blob/main/Home%20Bin%20AI.svg
