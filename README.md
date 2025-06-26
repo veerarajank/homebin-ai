@@ -81,7 +81,7 @@ Workflow Breakdown:
 # 🚀 Getting Started (How to Run HomeBin AI)
 To get HomeBin AI up and running, you'll need to set up the backend services and then run the Expo frontend.
 
- ** 1. Backend Services (n8n & Qdrant via Caddy on-prem Server) **
+ **1. Backend Services (n8n & Qdrant via Caddy on-prem Server)**
 
 * Prerequisites:
 
@@ -127,7 +127,7 @@ Import Workflows: Access your n8n instance (usually http://localhost:5678). Impo
 Activate Workflows: Ensure both workflows are Active.
 Copy Webhook URLs: Get the final public Webhook URLs for both the image analysis and feedback collection workflows from within n8n. These are the URLs your Expo app will call, accessible via Caddy (e.g., https://your.homebinai.domain/webhook/xxxxxxxx-xxxx-...).
 
-# 2. Frontend (Expo Web App)
+**2. Frontend (Expo Web App)**
 
 Access the Deployed App:
 HomeBin AI is deployed as a web application via Expo hosting. You can access it directly at: https://homebin-ai--acgno687s4.expo.app/
