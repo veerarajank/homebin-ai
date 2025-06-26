@@ -3,7 +3,7 @@
 **Your Smart Home Waste Assistant: Scan, Sort, & Recycle Right, Every Time.**
 
 [![Built with Bolt.new](https://img.shields.io/badge/Built%20with-Bolt.new-blueviolet)](https://bolt.new)
-[![GitHub Stars](https://img.shields.io/badge/github/stars/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=social)](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/stargazers)
+[![GitHub Stars](https://img.shields.io/badge/github/stars/veerarajank/homebin-ai?style=social)](https://github.com/veerarajank/homebin-ai/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
