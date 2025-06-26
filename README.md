@@ -1,4 +1,4 @@
-# HomeBin AI ![Home Bin AI Logo](https://github.com/veerarajank/homebin-ai/blob/main/assets/images/icon.png)
+# HomeBin AI ![Home Bin AI Logo](https://github.com/veerarajank/homebin-ai/blob/main/assets/images/favicon.png)
 
 **Your Smart Home Waste Assistant: Scan, Sort, & Recycle Right, Every Time.**
 
