@@ -66,21 +66,14 @@ Workflow Breakdown:
 * Feedback Loop: Users can provide feedback (helpful/unhelpful), which is collected by a separate n8n workflow and stored, informing future AI model improvements and rule refinements.
 
 🛠️ Technologies Used
-Bolt.new: Primary rapid application development platform for our frontend and app logic.
-
-Expo (React Native): Framework for building our universal, cross-platform mobile web application.
-
-n8n: Our powerful open-source workflow automation tool, serving as the central "AI Agent" for backend orchestration and data flow.
-
-Google Gemini API : Cutting-edge multimodal AI for highly accurate image analysis and specific item identification.
-
-Qdrant: High-performance vector database used for Retrieval-Augmented Generation (RAG) to store and semantically query hyperlocal recycling rules.
-
-Caddy: Modern, open-source web server acting as a reverse proxy for reliable and secure public access to our n8n and Qdrant services hosted on-prem server.
-
-Python (requests, BeautifulSoup, Sentence Transformers): Used for the initial data scraping of local council recycling websites (e.g., from Chelmsford, UK) and preparing data for Qdrant.
-
-Node.js: Backend runtime environment utilized within n8n.
+* Bolt.new: Primary rapid application development platform for our frontend and app logic.
+* Expo (React Native): Framework for building our universal, cross-platform mobile web application.
+* n8n: Our powerful open-source workflow automation tool, serving as the central "AI Agent" for backend orchestration and data flow.
+* Google Gemini API : Cutting-edge multimodal AI for highly accurate image analysis and specific item identification.
+* Qdrant: High-performance vector database used for Retrieval-Augmented Generation (RAG) to store and semantically query hyperlocal recycling rules.
+* Caddy: Modern, open-source web server acting as a reverse proxy for reliable and secure public access to our n8n and Qdrant services hosted on-prem server.
+* Python (requests, BeautifulSoup, Sentence Transformers): Used for the initial data scraping of local council recycling websites (e.g., from Chelmsford, UK) and preparing data for Qdrant.
+* Node.js: Backend runtime environment utilized within n8n.
 
 🚀 Getting Started (How to Run HomeBin AI)
 To get HomeBin AI up and running, you'll need to set up the backend services and then run the Expo frontend.
