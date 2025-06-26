@@ -153,7 +153,7 @@ This will open the app in your browser. For iOS/Android testing, use npx expo st
 # 🎥 Demo Video
 Watch a live demonstration of HomeBin AI in action, showcasing its accurate classification and instant recycling guidance:
 
-[![HomeBin AI App Demo]](https://youtu.be/_vq5F55b9eQ)
+[![HomeBin AI App Demo](https://github.com/veerarajank/homebin-ai/blob/main/assets/images/Screenshot%202025-06-26%20155011.png)](https://youtu.be/_vq5F55b9eQ)
 
 # 🔮 Future Enhancements
 * Cost-Effective Scalability: While Gemini API provides high accuracy, for very high-volume, real-time inferencing, exploring smaller, specialized multimodal models or fine-tuning more efficient open-source VLMs (like LLaVA or MiniGPT-4) on custom waste datasets could provide a more cost-effective solution for future scaling, potentially deploying them on serverless functions.
