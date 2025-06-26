@@ -2,8 +2,11 @@
 
 **Your Smart Home Waste Assistant: Scan, Sort, & Recycle Right, Every Time.**
 
+Built with 💚 for The World's Largest Hackathon by Bolt!
+
 [![Built with Bolt.new](https://img.shields.io/badge/Built%20with-Bolt.new-blueviolet)](https://bolt.new)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 
 ---
 
@@ -78,9 +81,9 @@ Workflow Breakdown:
 🚀 Getting Started (How to Run HomeBin AI)
 To get HomeBin AI up and running, you'll need to set up the backend services and then run the Expo frontend.
 
-1. Backend Services (n8n & Qdrant via Caddy on-prem Server)
+# 1. Backend Services (n8n & Qdrant via Caddy on-prem Server)
 
-Prerequisites:
+* Prerequisites:
 
 Docker and Docker Compose installed.
 A public IP address or domain name configured to point to on-prem server.
@@ -88,26 +91,28 @@ Google Gemini API Key.
 Qdrant API Key (if using a cloud Qdrant, otherwise not needed for local).
 (Optional) Basic understanding of Caddy configuration.
 
-Setup:
+* Setup:
 
 n8n folder inside this repo having workflow.
 
 Configure Environment Variables: Create a .env file in the root of your backend directory (where your docker-compose.yml for n8n/Qdrant/Caddy would be, or similar setup) with:
 Code snippet
 
-# For n8n to connect to Gemini
+For n8n to connect to Gemini 
 GOOGLE_GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 
-# For n8n to connect to Qdrant
+For n8n to connect to Qdrant
 QDRANT_HOST=http://localhost:6333 # If Qdrant is running locally via Docker
-# If Qdrant is cloud hosted, use its public URL and API key
-# QDRANT_HOST=[https://your-qdrant-instance.cloud](https://your-qdrant-instance.cloud)
-# QDRANT_API_KEY=your_qdrant_cloud_api_key
-Start Qdrant (and Populating Data):
+
+If Qdrant is cloud hosted, use its public URL and API key
+QDRANT_HOST=[https://your-qdrant-instance.cloud](https://your-qdrant-instance.cloud)
+QDRANT_API_KEY=your_qdrant_cloud_api_key
+
+* Start Qdrant (and Populating Data):
 Run Qdrant via Docker: docker run -p 6333:6333 qdrant/qdrant
 Populate Qdrant: Run your Python scraping script (scrape_chelmsford.py and any other data ingestion scripts) to scrape local council data (e.g., specifically for chelmsford, UK) and ingest it into your running Qdrant instance. Ensure the QDRANT_HOST in your Python script matches where Qdrant is running.
 
-Configure Caddy: Ensure your Caddyfile is correctly configured to proxy requests for n8n's webhooks and Qdrant's API endpoints to your local Docker containers. Example Caddyfile Snippet:
+* Configure Caddy: Ensure your Caddyfile is correctly configured to proxy requests for n8n's webhooks and Qdrant's API endpoints to your local Docker containers. Example Caddyfile Snippet:
 Code snippet
 
 your.homebinai.domain {
@@ -116,13 +121,13 @@ your.homebinai.domain {
     # You might need more specific paths for Qdrant
 }
 
-Start n8n:
+* Start n8n:
 Run n8n via Docker. docker run -it --rm --name n8n -p 5678:5678 -v ~/.n8n:/home/node/.n8n n8nio/n8n
 Import Workflows: Access your n8n instance (usually http://localhost:5678). Import the two n8n workflows (image_analysis_workflow.json and feedback_collection_workflow.json) provided in this repo's n8n_workflows directory.
 Activate Workflows: Ensure both workflows are Active.
 Copy Webhook URLs: Get the final public Webhook URLs for both the image analysis and feedback collection workflows from within n8n. These are the URLs your Expo app will call, accessible via Caddy (e.g., https://your.homebinai.domain/webhook/xxxxxxxx-xxxx-...).
 
-2. Frontend (Expo Web App)
+# 2. Frontend (Expo Web App)
 
 Access the Deployed App:
 HomeBin AI is deployed as a web application via Expo hosting. You can access it directly at: https://homebin-ai--acgno687s4.expo.app/
@@ -141,12 +146,13 @@ Bash
 
 npx expo start --web
 This will open the app in your browser. For iOS/Android testing, use npx expo start and scan the QR code with the Expo Go app.
-🎥 Demo Video
+
+# 🎥 Demo Video
 Watch a live demonstration of HomeBin AI in action, showcasing its accurate classification and instant recycling guidance:
 
 [YOUR_DEMO_VIDEO_YOUTUBE_URL_HERE]
 
-🔮 Future Enhancements
+# 🔮 Future Enhancements
 Cost-Effective Scalability: While Gemini API provides high accuracy, for very high-volume, real-time inferencing, exploring smaller, specialized multimodal models or fine-tuning more efficient open-source VLMs (like LLaVA or MiniGPT-4) on custom waste datasets could provide a more cost-effective solution for future scaling, potentially deploying them on serverless functions.
 Gemini Prompt Refinement: Continuously optimize the prompts sent to Gemini based on user feedback to further enhance identification accuracy and specificity for edge cases.
 Expanded Data Coverage: Integrate recycling rules from more local councils globally (e.g., beyond Broomfield, UK) for broader geographical coverage.
@@ -154,9 +160,4 @@ Gamification & Community Features: Introduce challenges, leaderboards, and a com
 Personalized Reminders: Smart notifications for collection days or specific item drop-offs.
 Offline Mode: Enable basic functionality without an internet connection for core item classification.
 
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
 
-Built with 💚 for The World's Largest Hackathon by Bolt!
-
-<img src="https://www.google.com/search?q=https://devpost-challenge-network-prod.s3.amazonaws.com/uploads/challenge/uploaded_gallery_image/image/6215/Devpost_builtwith_badge_2024.png" alt="Built with Bolt.new" width="200"/>
