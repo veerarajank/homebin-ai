@@ -153,11 +153,11 @@ Watch a live demonstration of HomeBin AI in action, showcasing its accurate clas
 [YOUR_DEMO_VIDEO_YOUTUBE_URL_HERE]
 
 # 🔮 Future Enhancements
-Cost-Effective Scalability: While Gemini API provides high accuracy, for very high-volume, real-time inferencing, exploring smaller, specialized multimodal models or fine-tuning more efficient open-source VLMs (like LLaVA or MiniGPT-4) on custom waste datasets could provide a more cost-effective solution for future scaling, potentially deploying them on serverless functions.
-Gemini Prompt Refinement: Continuously optimize the prompts sent to Gemini based on user feedback to further enhance identification accuracy and specificity for edge cases.
-Expanded Data Coverage: Integrate recycling rules from more local councils globally (e.g., beyond Broomfield, UK) for broader geographical coverage.
-Gamification & Community Features: Introduce challenges, leaderboards, and a community forum to encourage better recycling habits.
-Personalized Reminders: Smart notifications for collection days or specific item drop-offs.
-Offline Mode: Enable basic functionality without an internet connection for core item classification.
+* Cost-Effective Scalability: While Gemini API provides high accuracy, for very high-volume, real-time inferencing, exploring smaller, specialized multimodal models or fine-tuning more efficient open-source VLMs (like LLaVA or MiniGPT-4) on custom waste datasets could provide a more cost-effective solution for future scaling, potentially deploying them on serverless functions.
+* Gemini Prompt Refinement: Continuously optimize the prompts sent to Gemini based on user feedback to further enhance identification accuracy and specificity for edge cases.
+* Expanded Data Coverage: Integrate recycling rules from more local councils globally (e.g., beyond Broomfield, UK) for broader geographical coverage.
+* Gamification & Community Features: Introduce challenges, leaderboards, and a community forum to encourage better recycling habits.
+* Personalized Reminders: Smart notifications for collection days or specific item drop-offs.
+* Offline Mode: Enable basic functionality without an internet connection for core item classification.
 
 
