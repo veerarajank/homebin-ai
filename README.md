@@ -1,4 +1,4 @@
-# HomeBin AI 
+# HomeBin AI [![Built with Bolt.new](https://img.shields.io/badge/Built%20with-Bolt.new-blueviolet)]
 
 **Your Smart Home Waste Assistant: Scan, Sort, & Recycle Right, Every Time.**
 
