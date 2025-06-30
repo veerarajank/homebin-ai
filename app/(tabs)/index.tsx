@@ -188,7 +188,7 @@ export default function HomeScreen() {
         imageBlob = source;
       }
 
-      let webhookUrl = 'https://photos.tackletechies.com/webhook/6dc9b95c-02db-4294-bd43-0323b7f7e488';
+      let webhookUrl = 'https://n8n.tackletechies.com/webhook/6dc9b95c-02db-4294-bd43-0323b7f7e488';
 
       console.log({ webhookUrl });
       const analysisResponse = await fetch(webhookUrl, {
@@ -231,7 +231,7 @@ export default function HomeScreen() {
 
     try {
       const feedbackResponse = await fetch(
-        'https://photos.tackletechies.com/webhook/9b384fa3-deee-4e28-a299-fdce22a38b25',
+        'https://n8n.tackletechies.com/webhook/9b384fa3-deee-4e28-a299-fdce22a38b25',
         {
           method: 'POST',
           headers: {
