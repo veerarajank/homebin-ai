@@ -7,9 +7,9 @@ Built with 💚 for The World's Largest Hackathon by Bolt!
 [![Built with Bolt.new](https://img.shields.io/badge/Built%20with-Bolt.new-blueviolet)](https://bolt.new)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Web : https://homebin-ai--acgno687s4.expo.app/ (Limitation to only upload the image from gallery)
+Web : https://homebin-ai.netlify.app/ (Limitation to only upload the image from gallery in desktop web)
 
-Android APK : https://drive.google.com/file/d/1b8694w6gcWerYn0VpEOBrY6kFgeEbC_X/view?usp=sharing
+Android APK : https://drive.google.com/file/d/10g3vMp8fxFkoOmUBv3TfC3b6OhjsraIP/view?usp=sharing
 
 ---
 
