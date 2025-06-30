@@ -1,4 +1,3 @@
-// HomeScreen.tsx
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -15,9 +14,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera, Image as ImageIcon, ThumbsUp, ThumbsDown, Recycle } from 'lucide-react-native';
-
-// Import the new WebImageProcessor
-import { WebImageProcessor } from './WebImageProcessor'; // Adjust path if needed
 
 interface AnalysisResult {
   Id: number;
@@ -36,70 +32,49 @@ export default function HomeScreen() {
   const [userLocation, setUserLocation] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
-  // This state will either hold a URI (native) or a Blob (cropped web image) for analysis
-  const [imageForAnalysis, setImageForAnalysis] = useState<string | Blob | null>(null);
-  // New state to control when the WebImageProcessor (cropping UI) is shown
-  const [showWebCropper, setShowWebCropper] = useState(false);
-  // Store the original URI picked from gallery/camera on web, before cropping
-  const [originalWebImageUri, setOriginalWebImageUri] = useState<string | null>(null);
 
-
-  // Request permissions on component mount (only for native)
+  // Request permissions on component mount
   useEffect(() => {
-    if (Platform.OS !== 'web') {
-      requestPermissions();
-    }
+    requestPermissions();
   }, []);
 
   const requestPermissions = async () => {
-    const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
-    const { status: mediaLibraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (Platform.OS !== 'web') {
+      const { status: cameraStatus } = await ImagePicker.requestCameraPermissionsAsync();
+      const { status: mediaLibraryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (cameraStatus !== 'granted' || mediaLibraryStatus !== 'granted') {
-      Alert.alert(
-        'Permissions Required',
-        'HomeBin AI needs camera and photo library access to analyze your waste items.',
-        [{ text: 'OK' }]
-      );
+      if (cameraStatus !== 'granted' || mediaLibraryStatus !== 'granted') {
+        Alert.alert(
+          'Permissions Required',
+          'HomeBin AI needs camera and photo library access to analyze your waste items.',
+          [{ text: 'OK' }]
+        );
+      }
     }
   };
 
-  const commonImagePickerOptions = {
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsEditing: false, // We will handle editing on both platforms (Expo's for native, custom for web)
-    quality: 1, // Get full quality to allow for better cropping/resizing later
-    aspect: [4, 3] as [number, number], // Explicitly type for TS
-  };
-
-
   const takePhotoWithCamera = async () => {
     try {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert(
-            'Camera Permission Denied',
-            'Please enable camera access in your device settings to take photos.',
-            [{ text: 'OK' }]
-          );
-          return;
-        }
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
+      if (status !== 'granted') {
+        Alert.alert(
+          'Camera Permission Denied',
+          'Please enable camera access in your device settings to take photos.',
+          [{ text: 'OK' }]
+        );
+        return;
       }
 
       const result = await ImagePicker.launchCameraAsync({
-        ...commonImagePickerOptions,
-        allowsEditing: Platform.OS !== 'web', // Re-enable Expo's built-in editor for native
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
       });
 
       if (!result.canceled && result.assets[0]) {
-        if (Platform.OS === 'web') {
-          setOriginalWebImageUri(result.assets[0].uri);
-          setShowWebCropper(true); // Show the web cropper for this image
-        } else {
-          // Native already handled editing if allowsEditing was true
-          setSelectedImageUri(result.assets[0].uri);
-          setImageForAnalysis(result.assets[0].uri);
-        }
+        setSelectedImageUri(result.assets[0].uri);
         resetAnalysisState();
       }
     } catch (error) {
@@ -108,33 +83,28 @@ export default function HomeScreen() {
     }
   };
 
-  const pickImageFromGallery = async () => { // Renamed from pickImageFromGalleryNative for common use
+  const pickImageFromGallery = async () => {
     try {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert(
-            'Photo Library Permission Denied',
-            'Please enable photo library access in your device settings to select images.',
-            [{ text: 'OK' }]
-          );
-          return;
-        }
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== 'granted') {
+        Alert.alert(
+          'Photo Library Permission Denied',
+          'Please enable photo library access in your device settings to select images.',
+          [{ text: 'OK' }]
+        );
+        return;
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        ...commonImagePickerOptions,
-        allowsEditing: Platform.OS !== 'web', // Re-enable Expo's built-in editor for native
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
       });
 
       if (!result.canceled && result.assets[0]) {
-        if (Platform.OS === 'web') {
-          setOriginalWebImageUri(result.assets[0].uri);
-          setShowWebCropper(true); // Show the web cropper for this image
-        } else {
-          setSelectedImageUri(result.assets[0].uri);
-          setImageForAnalysis(result.assets[0].uri);
-        }
+        setSelectedImageUri(result.assets[0].uri);
         resetAnalysisState();
       }
     } catch (error) {
@@ -143,60 +113,42 @@ export default function HomeScreen() {
     }
   };
 
-  // Callback for WebImageProcessor
-  const handleWebImageCropped = (croppedBlob: Blob) => {
-    setSelectedImageUri(URL.createObjectURL(croppedBlob)); // For preview
-    setImageForAnalysis(croppedBlob); // Set Blob for analysis
-    setShowWebCropper(false); // Hide the cropper
-    resetAnalysisState();
-  };
-
-  // Callback if web cropping is canceled
-  const handleWebCropperCancel = () => {
-    setOriginalWebImageUri(null);
-    setSelectedImageUri(null); // Clear previous selection
-    setShowWebCropper(false);
-    resetAnalysisState();
-  };
-
   const resetAnalysisState = () => {
     setAnalysisResult(null);
     setAnalysisId(null);
     setFeedbackSubmitted(false);
   };
 
-  // Automatically analyze image when imageForAnalysis changes
+  // Automatically analyze image when selected
   useEffect(() => {
-    // Only analyze if an image is selected AND we are not currently analyzing
-    if (imageForAnalysis && !isAnalyzing) {
-      analyzeImage(imageForAnalysis);
+    if (selectedImageUri && !isAnalyzing) {
+      analyzeImage();
     }
-  }, [imageForAnalysis]); // Remove isAnalyzing from dependencies
+  }, [selectedImageUri]);
 
-  const analyzeImage = async (source: string | Blob) => {
-    if (!source) return;
+  const analyzeImage = async () => {
+    if (!selectedImageUri) return;
 
     setIsAnalyzing(true);
     setAnalysisResult(null);
 
     try {
-      let imageBlob: Blob;
-      if (typeof source === 'string') {
-        const response = await fetch(source);
-        imageBlob = await response.blob();
-      } else {
-        imageBlob = source;
-      }
+      // Fetch the image as a blob
+      const response = await fetch(selectedImageUri);
+      const imageBlob = await response.blob();
 
+      // Prepare the webhook URL with location parameter if provided
       let webhookUrl = 'https://photos.tackletechies.com/webhook/6dc9b95c-02db-4294-bd43-0323b7f7e488';
+      // if (userLocation.trim()) {
+      //   const locationParam = encodeURIComponent(userLocation.trim());
+      //   webhookUrl += `?location=${locationParam}`;
+      // }
 
-      console.log({ webhookUrl });
+      console.log({ webhookUrl })
+      // Send image to n8n webhook
       const analysisResponse = await fetch(webhookUrl, {
         method: 'POST',
-        body: imageBlob,
-        headers: {
-          'Content-Type': imageBlob.type
-        }
+        body: imageBlob
       });
 
       if (!analysisResponse.ok) {
@@ -250,6 +202,7 @@ export default function HomeScreen() {
 
       setFeedbackSubmitted(true);
 
+      // Show thank you message and reset after delay
       Alert.alert(
         'Thank you!',
         'Your feedback helps us improve HomeBin AI.',
@@ -278,12 +231,9 @@ export default function HomeScreen() {
 
   const resetToInitialState = () => {
     setSelectedImageUri(null);
-    setImageForAnalysis(null);
     setAnalysisResult(null);
     setAnalysisId(null);
     setFeedbackSubmitted(false);
-    setShowWebCropper(false); // Reset cropper visibility
-    setOriginalWebImageUri(null); // Clear original web image URI
   };
 
   return (
@@ -311,9 +261,8 @@ export default function HomeScreen() {
         <View style={styles.imageSection}>
           <Text style={styles.sectionTitle}>Capture or Select Item</Text>
 
-          {/* Render buttons only if the web cropper is NOT active */}
-          {!showWebCropper && (
-            <View style={styles.buttonContainer}>
+          <View style={styles.buttonContainer}>
+            {Platform.OS != "web" && (
               <TouchableOpacity
                 style={[styles.actionButton, styles.cameraButton]}
                 onPress={takePhotoWithCamera}
@@ -322,30 +271,18 @@ export default function HomeScreen() {
                 <Camera size={24} color="#FFFFFF" />
                 <Text style={styles.buttonText}>Take Photo</Text>
               </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={[styles.actionButton, styles.galleryButton]}
+              onPress={pickImageFromGallery}
+              disabled={isAnalyzing}
+            >
+              <ImageIcon size={24} color="#FFFFFF" />
+              <Text style={styles.buttonText}>Choose from Gallery</Text>
+            </TouchableOpacity>
+          </View>
 
-              <TouchableOpacity
-                style={[styles.actionButton, styles.galleryButton]}
-                onPress={pickImageFromGallery}
-                disabled={isAnalyzing}
-              >
-                <ImageIcon size={24} color="#FFFFFF" />
-                <Text style={styles.buttonText}>Choose from Gallery</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* Web Cropper UI (conditionally rendered only for web) */}
-          {Platform.OS === 'web' && showWebCropper && originalWebImageUri && (
-            <WebImageProcessor
-              initialImageUri={originalWebImageUri}
-              onImageCropped={handleWebImageCropped}
-              onCancel={handleWebCropperCancel} // Added cancel prop
-              isAnalyzing={isAnalyzing}
-            />
-          )}
-
-          {/* Image preview based on selectedImageUri (used by both platforms) */}
-          {selectedImageUri && !showWebCropper && ( // Hide preview when cropper is active
+          {selectedImageUri && (
             <View style={styles.imagePreviewContainer}>
               <Image source={{ uri: selectedImageUri }} style={styles.imagePreview} />
             </View>
